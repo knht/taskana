@@ -1,29 +1,39 @@
-import { Component, OnInit } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable, Subject } from 'rxjs';
-import { FormsValidatorService } from 'app/shared/services/forms-validator/forms-validator.service';
-import { WorkbasketAccessItems } from 'app/shared/models/workbasket-access-items';
+import {Component, OnInit} from '@angular/core';
+import {Select, Store} from '@ngxs/store';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Observable, Subject} from 'rxjs';
+import {FormsValidatorService} from 'app/shared/services/forms-validator/forms-validator.service';
+import {WorkbasketAccessItems} from 'app/shared/models/workbasket-access-items';
 import {
   Direction,
   Sorting,
   WORKBASKET_ACCESS_ITEM_SORT_PARAMETER_NAMING,
   WorkbasketAccessItemQuerySortParameter
 } from 'app/shared/models/sorting';
-import { EngineConfigurationSelectors } from 'app/shared/store/engine-configuration-store/engine-configuration.selectors';
-import { takeUntil } from 'rxjs/operators';
-import { AccessId } from '../../../shared/models/access-id';
-import { NotificationService } from '../../../shared/services/notifications/notification.service';
-import { AccessItemsCustomisation, CustomField, getCustomFields } from '../../../shared/models/customisation';
-import { customFieldCount } from '../../../shared/models/workbasket-access-items';
+import {
+  EngineConfigurationSelectors
+} from 'app/shared/store/engine-configuration-store/engine-configuration.selectors';
+import {takeUntil} from 'rxjs/operators';
+import {AccessId} from '../../../shared/models/access-id';
+import {NotificationService} from '../../../shared/services/notifications/notification.service';
+import {
+  AccessItemsCustomisation,
+  CustomField,
+  getCustomFields
+} from '../../../shared/models/customisation';
+import {customFieldCount} from '../../../shared/models/workbasket-access-items';
 import {
   GetAccessItems,
   GetGroupsByAccessId,
   RemoveAccessItemsPermissions
 } from '../../../shared/store/access-items-management-store/access-items-management.actions';
-import { AccessItemsManagementSelector } from '../../../shared/store/access-items-management-store/access-items-management.selector';
-import { MatDialog } from '@angular/material/dialog';
-import { WorkbasketAccessItemQueryFilterParameter } from '../../../shared/models/workbasket-access-item-query-filter-parameter';
+import {
+  AccessItemsManagementSelector
+} from '../../../shared/store/access-items-management-store/access-items-management.selector';
+import {MatDialog} from '@angular/material/dialog';
+import {
+  WorkbasketAccessItemQueryFilterParameter
+} from '../../../shared/models/workbasket-access-item-query-filter-parameter';
 
 @Component({
   selector: 'taskana-administration-access-items-management',
@@ -54,12 +64,17 @@ export class AccessItemsManagementComponent implements OnInit {
   destroy$ = new Subject<void>();
 
   constructor(
-    private formBuilder: FormBuilder,
-    private formsValidatorService: FormsValidatorService,
-    private notificationService: NotificationService,
-    private store: Store,
-    public dialog: MatDialog
-  ) {}
+      private formBuilder: FormBuilder,
+      private formsValidatorService: FormsValidatorService,
+      private notificationService: NotificationService,
+      private store: Store,
+      public dialog: MatDialog
+  ) {
+  }
+
+  get accessItemsGroups(): FormArray {
+    return this.accessItemsForm ? (this.accessItemsForm.get('accessItemsGroups') as FormArray) : null;
+  }
 
   ngOnInit() {
     this.groups$.pipe(takeUntil(this.destroy$)).subscribe((groups) => {
@@ -74,11 +89,11 @@ export class AccessItemsManagementComponent implements OnInit {
         this.accessIdPrevious = selected.accessId;
         this.accessIdName = selected.name;
         this.store
-          .dispatch(new GetGroupsByAccessId(selected.accessId))
-          .pipe(takeUntil(this.destroy$))
-          .subscribe(() => {
-            this.searchForAccessItemsWorkbaskets();
-          });
+        .dispatch(new GetGroupsByAccessId(selected.accessId))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
+          this.searchForAccessItemsWorkbaskets();
+        });
       }
     } else {
       this.accessItemsForm = null;
@@ -91,16 +106,19 @@ export class AccessItemsManagementComponent implements OnInit {
     const filterParameter: WorkbasketAccessItemQueryFilterParameter = {
       'access-id': [this.accessId, ...this.groups].map((a) => a.accessId)
     };
+
+    console.log(filterParameter);
+
     this.store
-      .dispatch(new GetAccessItems(filterParameter, this.sortModel))
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((state) => {
-        this.setAccessItemsGroups(
+    .dispatch(new GetAccessItems(filterParameter, this.sortModel))
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((state) => {
+      this.setAccessItemsGroups(
           state['accessItemsManagement'].accessItemsResource
-            ? state['accessItemsManagement'].accessItemsResource.accessItems
-            : []
-        );
-      });
+              ? state['accessItemsManagement'].accessItemsResource.accessItems
+              : []
+      );
+    });
   }
 
   setAccessItemsGroups(accessItems: Array<WorkbasketAccessItems>) {
@@ -132,33 +150,29 @@ export class AccessItemsManagementComponent implements OnInit {
   filterAccessItems() {
     if (this.accessItemsForm.value.accessIdFilter) {
       this.accessItems = this.accessItems.filter((value) =>
-        value.accessName.toLowerCase().includes(this.accessItemsForm.value.accessIdFilter.toLowerCase())
+          value.accessName.toLowerCase().includes(this.accessItemsForm.value.accessIdFilter.toLowerCase())
       );
     }
     if (this.accessItemsForm.value.workbasketKeyFilter) {
       this.accessItems = this.accessItems.filter((value) =>
-        value.workbasketKey.toLowerCase().includes(this.accessItemsForm.value.workbasketKeyFilter.toLowerCase())
+          value.workbasketKey.toLowerCase().includes(this.accessItemsForm.value.workbasketKeyFilter.toLowerCase())
       );
     }
   }
 
   revokeAccess() {
     this.notificationService.showDialog(
-      'ACCESS_ITEM_MANAGEMENT_REVOKE_ACCESS',
-      { accessId: this.accessId.accessId },
-      () => {
-        this.store
+        'ACCESS_ITEM_MANAGEMENT_REVOKE_ACCESS',
+        {accessId: this.accessId.accessId},
+        () => {
+          this.store
           .dispatch(new RemoveAccessItemsPermissions(this.accessId.accessId))
           .pipe(takeUntil(this.destroy$))
           .subscribe(() => {
             this.searchForAccessItemsWorkbaskets();
           });
-      }
+        }
     );
-  }
-
-  get accessItemsGroups(): FormArray {
-    return this.accessItemsForm ? (this.accessItemsForm.get('accessItemsGroups') as FormArray) : null;
   }
 
   isFieldValid(field: string, index: number): boolean {

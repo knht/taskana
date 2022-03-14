@@ -1,4 +1,4 @@
-import { asUrlQueryString } from './query-parameters-v2';
+import { asUrlQueryString } from './query-encoder';
 
 describe('asUrlQueryString', () => {
   it('should create a empty query', () => {

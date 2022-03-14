@@ -2,6 +2,10 @@ package pro.taskana.workbasket.rest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.beans.ConstructorProperties;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Optional;
 
 import pro.taskana.common.rest.QueryParameter;
@@ -42,8 +46,23 @@ public class WorkbasketAccessItemQueryFilterParameter
       String[] accessIdLike) {
     this.workbasketKey = workbasketKey;
     this.workbasketKeyLike = workbasketKeyLike;
-    this.accessId = accessId;
+    this.accessId =
+        Arrays.stream(accessId)
+            .map(
+                accessIdItem -> {
+                  try {
+                    return URLDecoder.decode(accessIdItem, StandardCharsets.UTF_8.toString());
+                  } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                  }
+                  return accessIdItem;
+                })
+            .toArray(String[]::new);
     this.accessIdLike = accessIdLike;
+  }
+
+  public String[] getAccessId() {
+    return accessId;
   }
 
   @Override
@@ -57,5 +76,18 @@ public class WorkbasketAccessItemQueryFilterParameter
         .map(this::wrapElementsInLikeStatement)
         .ifPresent(query::accessIdLike);
     return null;
+  }
+
+  @Override
+  public String toString() {
+    return "WorkbasketAccessItemQueryFilterParameter [workbasketKey="
+        + Arrays.toString(workbasketKey)
+        + ", workbasketKeyLike="
+        + Arrays.toString(workbasketKeyLike)
+        + ", accessId="
+        + Arrays.toString(accessId)
+        + ", accessIdLike="
+        + Arrays.toString(accessIdLike)
+        + "]";
   }
 }

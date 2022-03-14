@@ -4,7 +4,7 @@ import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
 import { ChartData } from 'app/monitor/models/chart-data';
 import { ReportData } from '../models/report-data';
-import { asUrlQueryString } from '../../shared/util/query-parameters-v2';
+import { asUrlQueryString } from '../../shared/util/query-encoder';
 import { TaskState } from '../../shared/models/task-state';
 
 const monitorUrl = '/v1/monitor/';

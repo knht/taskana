@@ -63,17 +63,17 @@ export class AccessItemsManagementState implements NgxsAfterBootstrap {
       .getAccessItems(action.filterParameter, action.sortParameter, action.pagingParameter)
       .pipe(
         take(1),
-        tap(
-          (accessItemsResource: WorkbasketAccessItemsRepresentation) => {
+        tap({
+          next: (accessItemsResource: WorkbasketAccessItemsRepresentation) => {
             this.requestInProgressService.setRequestInProgress(false);
             ctx.patchState({
               accessItemsResource
             });
           },
-          () => {
+          error: () => {
             this.requestInProgressService.setRequestInProgress(false);
           }
-        )
+        })
       );
   }
 

@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { StartupService } from '../../../shared/services/startup/startup.service';
 import { TaskHistoryQueryFilterParameter } from '../../../shared/models/task-history-query-filter-parameter';
 import { QueryPagingParameter } from '../../../shared/models/query-paging-parameter';
-import { asUrlQueryString } from '../../../shared/util/query-parameters-v2';
+import { asUrlQueryString } from '../../../shared/util/query-encoder';
 
 @Injectable({
   providedIn: 'root'

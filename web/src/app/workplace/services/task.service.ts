@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { TaskResource } from 'app/workplace/models/task-resource';
 import { Sorting, TaskQuerySortParameter } from 'app/shared/models/sorting';
 import { StartupService } from '../../shared/services/startup/startup.service';
-import { asUrlQueryString } from '../../shared/util/query-parameters-v2';
+import { asUrlQueryString } from '../../shared/util/query-encoder';
 import { TaskQueryFilterParameter } from '../../shared/models/task-query-filter-parameter';
 import { QueryPagingParameter } from '../../shared/models/query-paging-parameter';
 

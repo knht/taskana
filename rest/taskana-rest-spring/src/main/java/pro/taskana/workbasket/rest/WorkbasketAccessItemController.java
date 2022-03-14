@@ -65,6 +65,9 @@ public class WorkbasketAccessItemController {
       QueryPagingParameter<WorkbasketAccessItem, WorkbasketAccessItemQuery> pagingParameter)
       throws NotAuthorizedException {
 
+    System.out.println(filterParameter);
+    System.out.println(filterParameter.getAccessId().length);
+
     QueryParamsValidator.validateParams(
         request,
         WorkbasketAccessItemQueryFilterParameter.class,

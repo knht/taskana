@@ -14,7 +14,7 @@ import { catchError, mergeMap, tap } from 'rxjs/operators';
 import { WorkbasketRepresentation } from '../../models/workbasket-representation';
 import { WorkbasketQueryFilterParameter } from '../../models/workbasket-query-filter-parameter';
 import { QueryPagingParameter } from '../../models/query-paging-parameter';
-import { asUrlQueryString } from '../../util/query-parameters-v2';
+import { asUrlQueryString } from '../../util/query-encoder';
 
 @Injectable({
   providedIn: 'root'
